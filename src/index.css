@@ -1,0 +1,22 @@
+body {
+    font-family: "Roboto", sans-serif; /* Hoặc 'CustomFont' */
+    transition: all 0.25s ease-in-out;
+}
+
+::-webkit-scrollbar {
+    width: 5px; /* Độ rộng của thanh cuộn dọc */
+    height: 5px; /* Độ cao của thanh cuộn ngang */
+}
+
+/* Phần kéo của thanh cuộn */
+::-webkit-scrollbar-thumb {
+    background-color: #b7b7b7; /* Màu của phần kéo (thumb) */
+    border-radius: 10px; /* Làm cho các góc của thumb tròn */
+    border: 2px solid rgba(0, 0, 0, 0.1); /* Thêm viền nhẹ xung quanh thumb */
+}
+
+/* Vùng trượt của thanh cuộn */
+::-webkit-scrollbar-track {
+    background-color: #dddada; /* Màu của track (vùng trượt) */
+    border-radius: 10px; /* Làm cho các góc của track tròn */
+}
