@@ -23,8 +23,17 @@ const ForgotPassword = () => {
 	} = useForm<FormValues>()
 	const onSubmit = handleSubmit((data) => console.log(data))
 	return (
-		<Flex minH='100vh' align='center' justify='center'>
-			<Stack gap={8} mx='auto' maxW={410} w='100%' py={12} px={6}>
+		<Flex minH='100vh' align='center' justify='center' bg='bgPrimary'>
+			<Stack
+				gap={8}
+				mx='auto'
+				maxW={410}
+				w='100%'
+				py={12}
+				px={6}
+				bg='white'
+				borderRadius='2xl'
+			>
 				<Stack>
 					<Heading
 						fontSize={28}

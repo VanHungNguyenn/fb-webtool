@@ -7,7 +7,8 @@ import {
 	MenuTrigger,
 } from '@/components/ui/menu'
 import { Box, HStack, Separator, Stack, Text } from '@chakra-ui/react'
-import { BiLogOut, BiUser } from 'react-icons/bi'
+import { BiLogOut } from 'react-icons/bi'
+import { FiSettings } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 
 const AvatarDropdown = () => {
@@ -33,14 +34,14 @@ const AvatarDropdown = () => {
 				<Separator />
 				<MenuItem
 					asChild
-					value='profile'
+					value='settings'
 					p={2}
 					gap={3}
 					cursor='pointer'
 				>
-					<Link to='/profile'>
-						<BiUser />
-						<Box flex='1'>View Profile</Box>
+					<Link to='/settings'>
+						<FiSettings />
+						<Box flex='1'>Settings</Box>
 					</Link>
 				</MenuItem>
 				<MenuItem

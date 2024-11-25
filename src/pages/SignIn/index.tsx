@@ -13,13 +13,11 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 
 interface FormValues {
-	name: string
 	email: string
 	password: string
-	confirmPassword: string
 }
 
-const SignUp = () => {
+const SignIn = () => {
 	const {
 		register,
 		handleSubmit,
@@ -27,8 +25,17 @@ const SignUp = () => {
 	} = useForm<FormValues>()
 	const onSubmit = handleSubmit((data) => console.log(data))
 	return (
-		<Flex minH='100vh' align='center' justify='center'>
-			<Stack gap={8} mx='auto' maxW={410} w='100%' py={12} px={6}>
+		<Flex minH='100vh' align='center' justify='center' bg='bgPrimary'>
+			<Stack
+				gap={8}
+				mx='auto'
+				maxW={410}
+				w='100%'
+				py={12}
+				px={6}
+				bg='white'
+				borderRadius='2xl'
+			>
 				<Stack>
 					<Heading
 						fontSize={28}
@@ -36,27 +43,15 @@ const SignUp = () => {
 						pb={3}
 						color='gray.700'
 					>
-						Sign Up
+						Sign In
 					</Heading>
 					<Text fontSize={'sm'} color={'gray.600'} pb={6}>
-						Join us and start your journey today!
+						Enter your email and password to sign in!
 					</Text>
 				</Stack>
 
 				<form onSubmit={onSubmit}>
 					<Stack gap='4' align='flex-start' maxW='sm'>
-						<Field
-							label='Name'
-							invalid={!!errors.name}
-							errorText={errors.name?.message}
-						>
-							<Input
-								{...register('name', {
-									required: 'Name is required',
-								})}
-								placeholder='Your name'
-							/>
-						</Field>
 						<Field
 							label='Email'
 							invalid={!!errors.email}
@@ -81,25 +76,20 @@ const SignUp = () => {
 								placeholder='Min. 8 characters'
 							/>
 						</Field>
-						<Field
-							label='Confirm Password'
-							invalid={!!errors.confirmPassword}
-							errorText={errors.confirmPassword?.message}
-						>
-							<Input
-								{...register('confirmPassword', {
-									required: 'Confirm Password is required',
-								})}
-								placeholder='Min. 8 characters'
-							/>
-						</Field>
+						<Text alignSelf={'end'} fontSize='sm'>
+							<ChakraLink asChild outline={'none'}>
+								<Link to='/forgot-password'>
+									Forgot password?
+								</Link>
+							</ChakraLink>
+						</Text>
 						<Button type='submit' w='100%' borderRadius='xl'>
-							Sign Up
+							Sign In
 						</Button>
 						<Text color='gray.400' fontSize='sm'>
-							Already have an account?{' '}
+							Not register yet?{' '}
 							<ChakraLink asChild outline={'none'}>
-								<Link to='/sign-in'>Let's Sign in</Link>
+								<Link to='/sign-up'>Create an Account</Link>
 							</ChakraLink>
 						</Text>
 					</Stack>
@@ -109,4 +99,4 @@ const SignUp = () => {
 	)
 }
 
-export default SignUp
+export default SignIn
