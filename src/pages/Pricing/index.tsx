@@ -8,7 +8,7 @@ import {
 	Text,
 	VStack,
 } from '@chakra-ui/react'
-import { LuCheckCircle } from 'react-icons/lu'
+import { BiCheckCircle } from 'react-icons/bi'
 
 const Pricing = () => {
 	return (
@@ -24,8 +24,9 @@ const Pricing = () => {
 			</VStack>
 
 			<Flex alignItems={'center'} justify={'center'} gap={4} pb={10}>
-				{Array.from({ length: 3 }).map(() => (
+				{Array.from({ length: 3 }).map((_, index) => (
 					<Box
+						key={index}
 						w={400}
 						borderRadius='xl'
 						overflow='hidden'
@@ -54,38 +55,62 @@ const Pricing = () => {
 						<Box p={8} bg='bg'>
 							<List.Root gap={4} variant='plain' align='center'>
 								<List.Item>
-									<List.Indicator asChild color='green.500'>
-										<LuCheckCircle />
+									<List.Indicator
+										display='flex'
+										alignItems='center'
+										color='green.500'
+									>
+										<BiCheckCircle />
 									</List.Indicator>
 									International calling and messaging API
 								</List.Item>
 								<List.Item>
-									<List.Indicator asChild color='green.500'>
-										<LuCheckCircle />
+									<List.Indicator
+										display='flex'
+										alignItems='center'
+										color='green.500'
+									>
+										<BiCheckCircle />
 									</List.Indicator>
 									Additional phone numbers
 								</List.Item>
 								<List.Item>
-									<List.Indicator asChild color='green.500'>
-										<LuCheckCircle />
+									<List.Indicator
+										display='flex'
+										alignItems='center'
+										color='green.500'
+									>
+										<BiCheckCircle />
 									</List.Indicator>
 									Automated messages via Zapier
 								</List.Item>
 								<List.Item>
-									<List.Indicator asChild color='green.500'>
-										<LuCheckCircle />
+									<List.Indicator
+										display='flex'
+										alignItems='center'
+										color='green.500'
+									>
+										<BiCheckCircle />
 									</List.Indicator>
 									24/7 support and consulting
 								</List.Item>
 								<List.Item>
-									<List.Indicator asChild color='green.500'>
-										<LuCheckCircle />
+									<List.Indicator
+										display='flex'
+										alignItems='center'
+										color='green.500'
+									>
+										<BiCheckCircle />
 									</List.Indicator>
 									International calling and messaging API
 								</List.Item>
 								<List.Item>
-									<List.Indicator asChild color='green.500'>
-										<LuCheckCircle />
+									<List.Indicator
+										display='flex'
+										alignItems='center'
+										color='green.500'
+									>
+										<BiCheckCircle />
 									</List.Indicator>
 									Additional phone numbers
 								</List.Item>

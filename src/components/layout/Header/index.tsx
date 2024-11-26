@@ -1,7 +1,13 @@
+import { CloseButton } from '@/components/ui/close-button'
 import { Box } from '@chakra-ui/react'
+import { FaBars } from 'react-icons/fa'
 import AvatarDropdown from './components/AvatarDropdown'
 
-const Header = () => {
+interface HeaderProps {
+	setIsShowSidebar: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const Header = ({ setIsShowSidebar }: HeaderProps) => {
 	return (
 		<Box
 			py={4}
@@ -9,8 +15,11 @@ const Header = () => {
 			bg='bgPrimary'
 			display='flex'
 			alignItems='center'
-			justifyContent='end'
+			justifyContent='space-between'
 		>
+			<CloseButton onClick={() => setIsShowSidebar((prev) => !prev)}>
+				<FaBars />
+			</CloseButton>
 			<AvatarDropdown />
 		</Box>
 	)

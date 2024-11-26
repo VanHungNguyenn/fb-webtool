@@ -1,15 +1,20 @@
 import { Box, Stack } from '@chakra-ui/react'
 import SidebarOptions from './components/SidebarOptions'
 
-const Sidebar = () => {
+interface SidebarProps {
+	isShowSidebar: boolean
+}
+
+const Sidebar = ({ isShowSidebar }: SidebarProps) => {
 	return (
 		<Box
-			w={250}
+			w={isShowSidebar ? 250 : 0}
 			h='100vh'
 			overflowY='auto'
-			shadow='4px 0 4px 0 rgba(0, 0, 0, .3)'
+			shadow={isShowSidebar ? '4px 0 4px 0 rgba(0, 0, 0, .3)' : 'none'}
 			position='relative'
 			flexShrink={0}
+			transition='width 0.3s ease'
 			css={{
 				'&::-webkit-scrollbar': {
 					display: 'none',
