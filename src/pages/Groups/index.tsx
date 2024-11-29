@@ -1,5 +1,7 @@
 import { createListGroups, getListGroups } from '@/api'
 import { GroupData } from '@/api/types'
+import PaginationCustom from '@/components/custom/PaginationCustom'
+import BoxLayout from '@/components/layout/BoxLayout'
 import {
 	DialogBody,
 	DialogCloseTrigger,
@@ -9,12 +11,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-	PaginationItems,
-	PaginationNextTrigger,
-	PaginationPrevTrigger,
-	PaginationRoot,
-} from '@/components/ui/pagination'
 import useToast from '@/hooks/useToast'
 import { isValidUrl, renderTag, truncateText } from '@/utils'
 import {
@@ -22,7 +18,6 @@ import {
 	Button,
 	Flex,
 	Heading,
-	HStack,
 	Input,
 	Stack,
 	Table,
@@ -103,7 +98,7 @@ const Groups = () => {
 
 	return (
 		<>
-			<Box bg='bg' p={4} borderRadius={'xl'}>
+			<BoxLayout>
 				<Heading as='h3' fontSize='2xl' fontWeight='bold' pb={7}>
 					Groups
 				</Heading>
@@ -122,6 +117,8 @@ const Groups = () => {
 						onOpenChange={(details) =>
 							setIsDialogOpen(details.open)
 						}
+						placement='center'
+						motionPreset='slide-in-bottom'
 					>
 						<DialogTrigger asChild>
 							<Button>Add groups</Button>
@@ -222,22 +219,14 @@ const Groups = () => {
 							</Table.Body>
 						</Table.Root>
 					</Box>
-
-					<PaginationRoot
-						count={totalItems}
+					<PaginationCustom
+						totalItems={totalItems}
 						pageSize={pageSize}
-						page={currentPage}
-						onPageChange={(e) => setCurrentPage(e.page)}
-						alignSelf={'flex-end'}
-					>
-						<HStack wrap='wrap'>
-							<PaginationPrevTrigger />
-							<PaginationItems />
-							<PaginationNextTrigger />
-						</HStack>
-					</PaginationRoot>
+						currentPage={currentPage}
+						onPageChange={(page) => setCurrentPage(page)}
+					/>
 				</Stack>
-			</Box>
+			</BoxLayout>
 		</>
 	)
 }

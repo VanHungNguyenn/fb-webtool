@@ -104,10 +104,10 @@ export interface AccountData {
 	uid: string
 	password: string
 	tfa: string
+	email: string
 	cookie: string | null
 	token: string | null
 	proxy: string | null
-	email: string
 	user_agent: string
 	_id: string
 	state: string

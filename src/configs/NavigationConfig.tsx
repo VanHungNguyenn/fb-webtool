@@ -1,4 +1,4 @@
-import { BiDollar, BiGroup, BiWallet } from 'react-icons/bi'
+import { BiDollar, BiGroup } from 'react-icons/bi'
 import { GrArticle } from 'react-icons/gr'
 import { HiHome } from 'react-icons/hi'
 import {
@@ -13,8 +13,8 @@ import Help from '@/pages/Help'
 import Home from '@/pages/Home'
 import Posts from '@/pages/Posts'
 import Pricing from '@/pages/Pricing'
-import Recharge from '@/pages/Recharge'
 import Settings from '@/pages/Settings'
+import Users from '@/pages/Users'
 
 export const APP_PREFIX_PATH = ''
 
@@ -24,6 +24,7 @@ export interface NavTreeItem {
 	title: string
 	icon: JSX.Element
 	element: React.ReactNode
+	isAdmin: boolean
 }
 
 const appsNavTree: NavTreeItem[] = [
@@ -33,6 +34,7 @@ const appsNavTree: NavTreeItem[] = [
 		title: 'Home',
 		icon: <HiHome />,
 		element: <Home />,
+		isAdmin: false,
 	},
 	{
 		key: 'pricing',
@@ -40,6 +42,7 @@ const appsNavTree: NavTreeItem[] = [
 		title: 'Pricing',
 		icon: <BiDollar />,
 		element: <Pricing />,
+		isAdmin: false,
 	},
 	{
 		key: 'groups',
@@ -47,6 +50,7 @@ const appsNavTree: NavTreeItem[] = [
 		title: 'Groups',
 		icon: <BiGroup />,
 		element: <Groups />,
+		isAdmin: false,
 	},
 	{
 		key: 'Posts',
@@ -54,13 +58,7 @@ const appsNavTree: NavTreeItem[] = [
 		title: 'Posts',
 		icon: <GrArticle />,
 		element: <Posts />,
-	},
-	{
-		key: 'recharge',
-		path: `${APP_PREFIX_PATH}/recharge`,
-		title: 'Wallet Recharge',
-		icon: <BiWallet />,
-		element: <Recharge />,
+		isAdmin: false,
 	},
 	{
 		key: 'accounts',
@@ -68,6 +66,15 @@ const appsNavTree: NavTreeItem[] = [
 		title: 'Accounts',
 		icon: <MdOutlineSupervisorAccount />,
 		element: <Accounts />,
+		isAdmin: true,
+	},
+	{
+		key: 'users',
+		path: `${APP_PREFIX_PATH}/users`,
+		title: 'Users',
+		icon: <MdOutlineSupervisorAccount />,
+		element: <Users />,
+		isAdmin: true,
 	},
 	{
 		key: 'settings',
@@ -75,6 +82,7 @@ const appsNavTree: NavTreeItem[] = [
 		title: 'Settings',
 		icon: <MdSettings />,
 		element: <Settings />,
+		isAdmin: false,
 	},
 	{
 		key: 'helps',
@@ -82,6 +90,7 @@ const appsNavTree: NavTreeItem[] = [
 		title: 'Help',
 		icon: <MdOutlineLiveHelp />,
 		element: <Help />,
+		isAdmin: false,
 	},
 ]
 
