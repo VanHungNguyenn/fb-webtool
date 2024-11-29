@@ -1,4 +1,6 @@
+import { postForgotPassword } from '@/api'
 import { Field } from '@/components/ui/field'
+import { handleAxiosError } from '@/utils/AxiosErrorHandler'
 import {
 	Button,
 	Link as ChakraLink,
@@ -21,7 +23,16 @@ const ForgotPassword = () => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<FormValues>()
-	const onSubmit = handleSubmit((data) => console.log(data))
+	const onSubmit = handleSubmit(async (data) => {
+		console.log(data)
+		try {
+			const response = await postForgotPassword(data.email)
+
+			console.log(response)
+		} catch (error) {
+			handleAxiosError(error)
+		}
+	})
 	return (
 		<Flex minH='100vh' align='center' justify='center' bg='bgPrimary'>
 			<Stack

@@ -1,11 +1,37 @@
+export interface RegisterRequest {
+	email: string
+	password: string
+}
+
+export interface RegisterResponse {
+	success: boolean
+	data?: IUser
+	error?: string
+}
+
 export interface LoginRequest {
 	username: string
 	password: string
 }
 
 export interface LoginResponse {
-	access_token: string
-	token_type: string
+	success: boolean
+	data?: {
+		access_token: string
+		token_type: string
+	}
+	error?: string
+}
+
+export interface ForgotPasswordResponse {
+	success: boolean
+	error?: string
+}
+
+export interface LogoutResponse {
+	success: boolean
+	error?: string
+	data?: unknown
 }
 
 export interface UserSetting {
@@ -28,4 +54,10 @@ export interface IUser {
 	is_superuser: boolean
 	is_verified: boolean
 	setting: UserSetting
+}
+
+export interface GetInfoUserResponse {
+	success: boolean
+	data?: IUser
+	error?: string
 }

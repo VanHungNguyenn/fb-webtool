@@ -1,5 +1,11 @@
+import { getInfoUser, postLogin } from '@/api'
 import { Field } from '@/components/ui/field'
 import { PasswordInput } from '@/components/ui/password-input'
+import useToast from '@/hooks/useToast'
+import { useAppDispatch } from '@/lib/hooks'
+import { authActions } from '@/store/slices/authSlice'
+import AuthStorage from '@/utils/AuthStorage'
+import { handleAxiosError } from '@/utils/AxiosErrorHandler'
 import {
 	Button,
 	Link as ChakraLink,
@@ -10,7 +16,7 @@ import {
 	Text,
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 
 interface FormValues {
 	email: string
@@ -23,7 +29,55 @@ const SignIn = () => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<FormValues>()
-	const onSubmit = handleSubmit((data) => console.log(data))
+	const dispatch = useAppDispatch()
+	const navigate = useNavigate()
+	const { showToast } = useToast()
+
+	const onSubmit = handleSubmit(async (data) => {
+		try {
+			dispatch(authActions.setIsLoading(true))
+
+			const response = await postLogin({
+				username: data.email,
+				password: data.password,
+			})
+
+			if (response.status === 200 && response.data?.access_token) {
+				const token = response.data.access_token
+				AuthStorage.setToken(token)
+
+				const infoUser = await getInfoUser()
+
+				if (infoUser.success && infoUser.data) {
+					dispatch(
+						authActions.actionLoginSuccess({
+							token: token,
+							user: infoUser.data,
+						})
+					)
+
+					showToast({
+						description: 'Sign in successfully',
+						type: 'success',
+					})
+
+					navigate('/')
+				} else {
+					showToast({
+						description: infoUser?.error || '',
+						type: 'error',
+					})
+				}
+			} else {
+				showToast({
+					description: 'Email or password is incorrect',
+					type: 'error',
+				})
+			}
+		} catch (error: unknown) {
+			handleAxiosError(error)
+		}
+	})
 	return (
 		<Flex minH='100vh' align='center' justify='center' bg='bgPrimary'>
 			<Stack
@@ -60,6 +114,10 @@ const SignIn = () => {
 							<Input
 								{...register('email', {
 									required: 'Email is required',
+									pattern: {
+										value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+										message: 'Invalid email address',
+									},
 								})}
 								placeholder='mail@example.com'
 							/>
@@ -72,8 +130,13 @@ const SignIn = () => {
 							<PasswordInput
 								{...register('password', {
 									required: 'Password is required',
+									minLength: {
+										value: 1,
+										message:
+											'Password must be at least 6 characters',
+									},
 								})}
-								placeholder='Min. 8 characters'
+								placeholder='Min. 6 characters'
 							/>
 						</Field>
 						<Text alignSelf={'end'} fontSize='sm'>

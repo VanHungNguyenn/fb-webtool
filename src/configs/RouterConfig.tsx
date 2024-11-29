@@ -3,13 +3,19 @@ import ForgotPassword from '@/pages/ForgotPassword'
 import Page404 from '@/pages/Page404'
 import SignIn from '@/pages/SignIn'
 import SignUp from '@/pages/SignUp'
+import PrivateRoute from '@/routes/PrivateRoute'
+import PublicRoute from '@/routes/PublicRoute'
 import { createBrowserRouter } from 'react-router-dom'
 import navigationConfig, { NavTreeItem } from './NavigationConfig'
 
 export const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <DashboardLayout />,
+		element: (
+			<PrivateRoute>
+				<DashboardLayout />
+			</PrivateRoute>
+		),
 		children: navigationConfig.map((navItem: NavTreeItem) => ({
 			path: navItem.path,
 			element: navItem.element,
@@ -18,15 +24,27 @@ export const router = createBrowserRouter([
 	},
 	{
 		path: '/sign-in',
-		element: <SignIn />,
+		element: (
+			<PublicRoute>
+				<SignIn />
+			</PublicRoute>
+		),
 	},
 	{
 		path: '/sign-up',
-		element: <SignUp />,
+		element: (
+			<PublicRoute>
+				<SignUp />
+			</PublicRoute>
+		),
 	},
 	{
 		path: 'forgot-password',
-		element: <ForgotPassword />,
+		element: (
+			<PublicRoute>
+				<ForgotPassword />
+			</PublicRoute>
+		),
 	},
 	{
 		path: '*',

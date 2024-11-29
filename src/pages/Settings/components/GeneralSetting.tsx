@@ -127,6 +127,17 @@ const GeneralSetting = () => {
 						<Button>Test</Button>
 					</Flex>
 				)}
+				{selectedServices.includes('google-sheet') && (
+					<Flex gap={3}>
+						<HStack>
+							<Text fontSize={'sm'} whiteSpace={'nowrap'}>
+								Sheet ID:
+							</Text>
+							<Input />
+						</HStack>
+						<Button>Test</Button>
+					</Flex>
+				)}
 			</Fieldset.Root>
 			<Button w={200}>Save</Button>
 		</Stack>

@@ -6,7 +6,6 @@ import Sidebar from '../Sidebar'
 
 const DashboardLayout = () => {
 	const [isShowSidebar, setIsShowSidebar] = useState(true)
-	console.log(isShowSidebar)
 
 	return (
 		<Box h='100vh' display='flex'>

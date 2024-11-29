@@ -1,3 +1,4 @@
+import { authReducer } from '@/store/slices/authSlice'
 import { statusNotificationReducer } from '@/store/slices/statusNotificationSlice'
 import {
 	Action,
@@ -9,6 +10,7 @@ import createSagaMiddleware from 'redux-saga'
 import rootSaga from './rootSaga'
 
 const rootReducer = combineReducers({
+	auth: authReducer,
 	statusNotification: statusNotificationReducer,
 })
 
