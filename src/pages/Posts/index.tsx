@@ -4,6 +4,7 @@ import PaginationCustom from '@/components/custom/PaginationCustom'
 import BoxLayout from '@/components/layout/BoxLayout'
 import {
 	formatTimestamp,
+	getPageSizeDefault,
 	transformToFacebookPostUrl,
 	truncateText,
 } from '@/utils'
@@ -17,7 +18,7 @@ import {
 	Stack,
 	Table,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 
 const Posts = () => {
@@ -27,30 +28,29 @@ const Posts = () => {
 	const [isLoading, setIsLoading] = useState(false) // Trạng thái loading
 	const [q, setQ] = useState('')
 
-	const pageSize = 10
+	const [pageSize, setPageSize] = useState(getPageSizeDefault())
 
 	const startIndex = (currentPage - 1) * pageSize
 
-	const fetchPosts = async (
-		page: number,
-		q: string,
-		group_id: string = ''
-	) => {
-		try {
-			setIsLoading(true)
-			const res = await getListPosts(q, page, pageSize, group_id)
-			setData(res.data)
-			setTotalItems(res.total)
-		} catch (error) {
-			console.error(error)
-		} finally {
-			setIsLoading(false)
-		}
-	}
+	const fetchPosts = useCallback(
+		async (page: number, q: string, group_id: string = '') => {
+			try {
+				setIsLoading(true)
+				const res = await getListPosts(q, page, pageSize, group_id)
+				setData(res.data)
+				setTotalItems(res.total)
+			} catch (error) {
+				console.error(error)
+			} finally {
+				setIsLoading(false)
+			}
+		},
+		[pageSize]
+	)
 
 	useEffect(() => {
 		fetchPosts(currentPage, '')
-	}, [currentPage])
+	}, [currentPage, fetchPosts])
 
 	const handleSearchClick = () => {
 		setCurrentPage(1)
@@ -86,7 +86,7 @@ const Posts = () => {
 				</Flex>
 			</Flex>
 			<Stack>
-				<Box overflowX='auto' p={1}>
+				<Box p={1}>
 					<Table.Root size='sm' showColumnBorder variant='outline'>
 						<Table.Header background='#b1c5fa'>
 							<Table.Row>
@@ -150,6 +150,7 @@ const Posts = () => {
 					pageSize={pageSize}
 					currentPage={currentPage}
 					onPageChange={(page) => setCurrentPage(page)}
+					setPageSize={setPageSize}
 				/>
 			</Stack>
 		</BoxLayout>

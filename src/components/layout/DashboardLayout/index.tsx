@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react'
+import { Box, Flex } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Header from '../Header'
@@ -8,18 +8,18 @@ const DashboardLayout = () => {
 	const [isShowSidebar, setIsShowSidebar] = useState(true)
 
 	return (
-		<Box h='100vh' display='flex'>
+		<Box h='100vh' display='flex' maxH='100vh' overflow='hidden'>
 			<Sidebar isShowSidebar={isShowSidebar} />
 			<Box
 				flex={1}
 				display='flex'
 				flexDirection='column'
-				overflow={'hidden'}
+				overflowY='auto'
 			>
 				<Header setIsShowSidebar={setIsShowSidebar} />
-				<Box p={4} flex={1} overflowY='auto' bg='bgPrimary'>
+				<Flex p={4} flex={1} bg='bgPrimary'>
 					<Outlet />
-				</Box>
+				</Flex>
 			</Box>
 		</Box>
 	)

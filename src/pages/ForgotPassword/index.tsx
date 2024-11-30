@@ -24,7 +24,6 @@ const ForgotPassword = () => {
 		formState: { errors },
 	} = useForm<FormValues>()
 	const onSubmit = handleSubmit(async (data) => {
-		console.log(data)
 		try {
 			const response = await postForgotPassword(data.email)
 

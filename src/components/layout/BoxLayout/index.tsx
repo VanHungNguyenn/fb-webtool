@@ -1,14 +1,14 @@
-import { Box, BoxProps } from '@chakra-ui/react'
+import { Stack, StackProps } from '@chakra-ui/react'
 
-interface BoxLayoutProps extends BoxProps {
+interface BoxLayoutProps extends StackProps {
 	children: React.ReactNode
 }
 
 const BoxLayout = ({ children, ...props }: BoxLayoutProps) => {
 	return (
-		<Box bg='bg' p={4} borderRadius='xl' {...props}>
+		<Stack flex={1} bg='bg' p={4} borderRadius='xl' {...props}>
 			{children}
-		</Box>
+		</Stack>
 	)
 }
 

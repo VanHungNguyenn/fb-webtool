@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { FileUploadRoot, FileUploadTrigger } from '@/components/ui/file-upload'
 import useToast from '@/hooks/useToast'
-import { truncateText } from '@/utils'
+import { getPageSizeDefault, truncateText } from '@/utils'
 import {
 	Box,
 	Button,
@@ -26,7 +26,7 @@ import {
 	Textarea,
 } from '@chakra-ui/react'
 import { FileAcceptDetails } from '@zag-js/file-upload'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { HiUpload } from 'react-icons/hi'
 
 const Accounts = () => {
@@ -38,28 +38,31 @@ const Accounts = () => {
 	const [q, setQ] = useState('')
 	const [accountValues, setAccountValues] = useState('')
 	const [errorAddMessage, setErrorAddMessage] = useState('')
-	const pageSize = 10
+	const [pageSize, setPageSize] = useState(getPageSizeDefault())
 
 	const { showToast } = useToast()
 
 	const startIndex = (currentPage - 1) * pageSize
 
-	const fetchAccounts = async (page: number, q: string) => {
-		try {
-			setIsLoading(true)
-			const res = await getListAccounts(q, page, pageSize)
-			setData(res.data)
-			setTotalItems(res.total)
-		} catch (error) {
-			console.error(error)
-		} finally {
-			setIsLoading(false)
-		}
-	}
+	const fetchAccounts = useCallback(
+		async (page: number, q: string) => {
+			try {
+				setIsLoading(true)
+				const res = await getListAccounts(q, page, pageSize)
+				setData(res.data)
+				setTotalItems(res.total)
+			} catch (error) {
+				console.error(error)
+			} finally {
+				setIsLoading(false)
+			}
+		},
+		[pageSize]
+	)
 
 	useEffect(() => {
 		fetchAccounts(currentPage, '')
-	}, [currentPage])
+	}, [currentPage, fetchAccounts])
 
 	const handleSearchClick = () => {
 		setCurrentPage(1)
@@ -302,6 +305,7 @@ const Accounts = () => {
 					pageSize={pageSize}
 					currentPage={currentPage}
 					onPageChange={(page) => setCurrentPage(page)}
+					setPageSize={setPageSize}
 				/>
 			</Stack>
 		</BoxLayout>

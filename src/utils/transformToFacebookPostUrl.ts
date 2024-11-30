@@ -3,8 +3,6 @@ export function transformToFacebookPostUrl(data: string | null) {
 		return data || ''
 	}
 
-	console.log('data')
-
 	const [groupId, postId] = data.split('_')
 	return `https://www.facebook.com/groups/${groupId}/posts/${postId}/`
 }

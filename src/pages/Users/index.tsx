@@ -2,7 +2,7 @@ import { getListUsers } from '@/api'
 import { UserData } from '@/api/types'
 import PaginationCustom from '@/components/custom/PaginationCustom'
 import BoxLayout from '@/components/layout/BoxLayout'
-import { renderTagBoolean } from '@/utils'
+import { getPageSizeDefault, renderTagBoolean } from '@/utils'
 import {
 	Box,
 	Button,
@@ -12,7 +12,7 @@ import {
 	Stack,
 	Table,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 const Users = () => {
 	const [data, setData] = useState<UserData[]>([])
@@ -21,27 +21,30 @@ const Users = () => {
 	const [isLoading, setIsLoading] = useState(false) // Trạng thái loading
 	const [q, setQ] = useState('')
 
-	const pageSize = 10
+	const [pageSize, setPageSize] = useState(getPageSizeDefault())
 
 	const startIndex = (currentPage - 1) * pageSize
 
-	const fetchUsers = async (page: number, q: string) => {
-		try {
-			setIsLoading(true)
-			const res = await getListUsers(q, page, pageSize)
-			console.log(res)
-			setData(res.data)
-			setTotalItems(res.total)
-		} catch (error) {
-			console.error(error)
-		} finally {
-			setIsLoading(false)
-		}
-	}
+	const fetchUsers = useCallback(
+		async (page: number, q: string) => {
+			try {
+				setIsLoading(true)
+				const res = await getListUsers(q, page, pageSize)
+				console.log(res)
+				setData(res.data)
+				setTotalItems(res.total)
+			} catch (error) {
+				console.error(error)
+			} finally {
+				setIsLoading(false)
+			}
+		},
+		[pageSize]
+	)
 
 	useEffect(() => {
 		fetchUsers(currentPage, '')
-	}, [currentPage])
+	}, [currentPage, fetchUsers])
 
 	const handleSearchClick = () => {
 		setCurrentPage(1)
@@ -126,6 +129,7 @@ const Users = () => {
 					pageSize={pageSize}
 					currentPage={currentPage}
 					onPageChange={(page) => setCurrentPage(page)}
+					setPageSize={setPageSize}
 				/>
 			</Stack>
 		</BoxLayout>
