@@ -11,26 +11,24 @@ const Settings = () => {
 			</Heading>
 			<Tabs.Root defaultValue='general'>
 				<Tabs.List>
-					<Tabs.Trigger value='general'>
+					<Tabs.Trigger value='general' fontSize='lg'>
 						<LuCheckSquare />
 						General
 					</Tabs.Trigger>
-					<Tabs.Trigger value='plan'>
-						<LuFolder />
-						Plan
-					</Tabs.Trigger>
-					<Tabs.Trigger value='profile'>
+					<Tabs.Trigger value='profile' fontSize='lg'>
 						<LuUser />
 						Profile
+					</Tabs.Trigger>
+					<Tabs.Trigger value='plan' fontSize='lg'>
+						<LuFolder />
+						Plan
 					</Tabs.Trigger>
 				</Tabs.List>
 				<Tabs.Content value='general'>
 					<GeneralSetting />
 				</Tabs.Content>
-				<Tabs.Content value='plan'>Manage your projects</Tabs.Content>
-				<Tabs.Content value='profile'>
-					Manage your tasks for freelancers
-				</Tabs.Content>
+				<Tabs.Content value='profile'>Profile page</Tabs.Content>
+				<Tabs.Content value='plan'>Plan page</Tabs.Content>
 			</Tabs.Root>
 		</BoxLayout>
 	)

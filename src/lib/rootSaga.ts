@@ -1,3 +1,4 @@
+import authSaga from '@/store/saga/authSaga'
 import { statusNotificationActions } from '@/store/slices/statusNotificationSlice'
 import { AxiosError, AxiosResponse } from 'axios'
 import { all, put } from 'redux-saga/effects'
@@ -11,5 +12,5 @@ export function* handleHttpResponse(data: AxiosResponse) {
 }
 
 export default function* rootSaga() {
-	yield all([])
+	yield all([authSaga()])
 }

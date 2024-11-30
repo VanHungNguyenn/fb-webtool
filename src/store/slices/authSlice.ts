@@ -60,8 +60,14 @@ const authSlice = createSlice({
 			state.isLoading = false
 			AuthStorage.removeToken()
 		},
-		setUser(state, action: PayloadAction<IUser>) {
+		setUser() {
+			// do nothing
+		},
+		setUserSuccess(state, action: PayloadAction<IUser>) {
 			state.user = action.payload
+			state.isLoading = false
+		},
+		setUserFailed(state) {
 			state.isLoading = false
 		},
 	},
@@ -74,5 +80,27 @@ export const selectUserToken = (state: RootState) => state.auth.token
 export const selectUser = (state: RootState) => state.auth.user
 export const selectIsLoading = (state: RootState) => state.auth.isLoading
 export const selectEmail = (state: RootState) => state.auth.user?.email
+export const selectIsActive = (state: RootState) => state.auth.user?.is_active
+export const selectIsSuperuser = (state: RootState) =>
+	state.auth.user?.is_superuser
+export const selectIsVerified = (state: RootState) =>
+	state.auth.user?.is_verified
+export const selectTelegram = (state: RootState) =>
+	state.auth.user?.setting.telegram
+export const selectSheet = (state: RootState) => state.auth.user?.setting.sheet
+export const selectIsEnabledNotification = (state: RootState) =>
+	state.auth.user?.setting?.is_enabled_notification
+export const selectIsEnabledKeywords = (state: RootState) =>
+	state.auth.user?.setting?.is_enabled_keywords
+export const selectKeywords = (state: RootState) =>
+	state.auth.user?.setting?.keywords
+export const selectTelegramIsEnabled = (state: RootState) =>
+	state.auth.user?.setting?.telegram.is_enabled
+export const selectTelegramToken = (state: RootState) =>
+	state.auth.user?.setting?.telegram.token
+export const selectTelegramChatId = (state: RootState) =>
+	state.auth.user?.setting?.telegram.chat_id
+export const selectTelegramThreadId = (state: RootState) =>
+	state.auth.user?.setting?.telegram.thread_id
 
 export const authReducer = authSlice.reducer
