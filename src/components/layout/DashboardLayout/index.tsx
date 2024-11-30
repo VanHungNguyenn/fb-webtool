@@ -10,7 +10,12 @@ const DashboardLayout = () => {
 	return (
 		<Box h='100vh' display='flex'>
 			<Sidebar isShowSidebar={isShowSidebar} />
-			<Box flex={1} display='flex' flexDirection='column'>
+			<Box
+				flex={1}
+				display='flex'
+				flexDirection='column'
+				overflow={'hidden'}
+			>
 				<Header setIsShowSidebar={setIsShowSidebar} />
 				<Box p={4} flex={1} overflowY='auto' bg='bgPrimary'>
 					<Outlet />

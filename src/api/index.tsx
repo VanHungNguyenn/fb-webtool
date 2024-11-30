@@ -9,6 +9,7 @@ import {
 	GetInfoUserResponse,
 	GetListAccountResponse,
 	GetListGroupsResponse,
+	GetListPostsResponse,
 	LoginRequest,
 	RegisterRequest,
 } from './types'
@@ -111,6 +112,20 @@ export const createListAccounts = async (
 	const url = '/api/accounts/bulk'
 
 	const response = await axiosPrivate.post(url, data)
+
+	return response.data
+}
+
+// posts
+export const getListPosts = async (
+	q: string,
+	page: number = 1,
+	limit: number = 10,
+	group_id: string
+): Promise<GetListPostsResponse> => {
+	const url = `/api/posts/?page=${page}&limit=${limit}&q=${q}&group_id=${group_id}`
+
+	const response = await axiosPrivate.get(url)
 
 	return response.data
 }

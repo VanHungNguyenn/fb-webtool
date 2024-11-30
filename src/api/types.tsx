@@ -126,11 +126,11 @@ export interface AccountDataRequest {
 	uid: string
 	password: string
 	tfa: string
-	cookie: string
-	token: string
-	proxy: string
-	email: string
-	user_agent: string
+	cookie?: string
+	token?: string
+	proxy?: string
+	email?: string
+	user_agent?: string
 }
 
 export interface CreateListAccountsRequest {
@@ -143,4 +143,26 @@ export interface CreateListAccountsResponse {
 		created: number
 		total: number
 	}
+}
+
+export interface PostData {
+	_id: string
+	post_id: string
+	message: string
+	group: {
+		id: string
+		collection: string
+	}
+	created_time: string // ISO format date string
+	updated_time: string // ISO format date string
+	from_user: {
+		id: string
+		name: string
+	}
+}
+
+export interface GetListPostsResponse {
+	success: boolean
+	total: number
+	data: PostData[]
 }

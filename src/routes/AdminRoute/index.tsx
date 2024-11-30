@@ -7,8 +7,6 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 	const user = useAppSelector(selectUser)
 	const isAdmin = user?.is_superuser
 
-	console.log({ isLoggedIn, user, isAdmin })
-
 	return isLoggedIn && isAdmin ? <>{children}</> : <Navigate to='/' replace />
 }
 

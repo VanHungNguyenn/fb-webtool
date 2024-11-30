@@ -1,4 +1,4 @@
-import { getListAccounts } from '@/api'
+import { createListAccounts, getListAccounts } from '@/api'
 import { AccountData } from '@/api/types'
 import PaginationCustom from '@/components/custom/PaginationCustom'
 import BoxLayout from '@/components/layout/BoxLayout'
@@ -11,6 +11,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
+import { FileUploadRoot, FileUploadTrigger } from '@/components/ui/file-upload'
 import useToast from '@/hooks/useToast'
 import { truncateText } from '@/utils'
 import {
@@ -24,7 +25,9 @@ import {
 	Text,
 	Textarea,
 } from '@chakra-ui/react'
+import { FileAcceptDetails } from '@zag-js/file-upload'
 import { useEffect, useState } from 'react'
+import { HiUpload } from 'react-icons/hi'
 
 const Accounts = () => {
 	const [data, setData] = useState<AccountData[]>([])
@@ -59,11 +62,93 @@ const Accounts = () => {
 	}, [currentPage])
 
 	const handleSearchClick = () => {
+		setCurrentPage(1)
 		fetchAccounts(currentPage, q)
 	}
 
+	const handleAddAccountValueFromTxt = async (details: FileAcceptDetails) => {
+		try {
+			const file = details.files[0]
+
+			if (!file) {
+				setErrorAddMessage('No file selected.')
+				return
+			}
+
+			const fileContent = await file.text()
+
+			const accounts = fileContent
+				.split('\n')
+				.map((line) => line.trim())
+				.filter((line) => line)
+
+			const parsedAccounts = accounts.map((line) => {
+				const [uid, password, tfa, cookie, token, proxy] =
+					line.split('|')
+				return { uid, password, tfa, cookie, token, proxy }
+			})
+
+			if (parsedAccounts.some((acc) => !acc.uid || !acc.password)) {
+				setErrorAddMessage('Each account must have a UID and Password.')
+				return
+			}
+
+			const accountsText = parsedAccounts
+				.map(
+					(account) =>
+						`${account.uid}|${account.password}|${account.tfa}|${account.cookie}|${account.token}|${account.proxy}`
+				)
+				.join('\n')
+
+			setErrorAddMessage('')
+			setAccountValues(accountsText)
+		} catch (error) {
+			console.error(error)
+			setErrorAddMessage('An error occurred while adding accounts.')
+		}
+	}
+
 	const handleAddAccountValue = async () => {
-		//
+		try {
+			const accounts = accountValues
+				.split('\n')
+				.map((line) => line.trim())
+				.filter((line) => line)
+
+			const parsedAccounts = accounts.map((line) => {
+				const [uid, password, tfa, cookie, token, proxy] =
+					line.split('|')
+				return { uid, password, tfa, cookie, token, proxy }
+			})
+
+			// Kiểm tra nếu thiếu UID hoặc Password
+			if (parsedAccounts.some((acc) => !acc.uid || !acc.password)) {
+				setErrorAddMessage('Each account must have a UID and Password.')
+				return
+			}
+
+			const requestData = { data: parsedAccounts }
+			const response = await createListAccounts(requestData)
+
+			if (response.success) {
+				showToast({
+					description: `Created ${response.data.created} of ${response.data.total} accounts successfully.`,
+					type: 'success',
+				})
+
+				// Làm mới danh sách tài khoản (nếu cần)
+				fetchAccounts(currentPage, q)
+
+				// Đóng dialog và xóa dữ liệu nhập
+				setAccountValues('')
+				setIsDialogOpen(false)
+			} else {
+				setErrorAddMessage('Failed to create accounts.')
+			}
+		} catch (error) {
+			console.error(error)
+			setErrorAddMessage('An error occurred while adding accounts.')
+		}
 	}
 
 	return (
@@ -71,16 +156,29 @@ const Accounts = () => {
 			<Heading as='h3' fontSize='2xl' fontWeight='bold' pb={7}>
 				Accounts
 			</Heading>
-			<Flex alignItems={'center'} justify='space-between' pb={5}>
+			<Flex
+				alignItems={{
+					base: 'flex-start',
+					md: 'center',
+				}}
+				justify={{
+					base: 'center',
+					md: 'space-between',
+				}}
+				pb={5}
+				gap={2}
+				flexDirection={{ base: 'column', md: 'row' }}
+			>
 				<Flex alignItems={'center'} justify={'end'} gap={2}>
 					<Input
-						w={500}
+						w={400}
 						placeholder='Search...'
 						value={q}
 						onChange={(e) => setQ(e.target.value)}
 					/>
 					<Button onClick={handleSearchClick}>Search</Button>
 				</Flex>
+
 				<DialogRoot
 					open={isDialogOpen}
 					onOpenChange={(details) => setIsDialogOpen(details.open)}
@@ -96,14 +194,29 @@ const Accounts = () => {
 							<DialogTitle>Add Accounts</DialogTitle>
 						</DialogHeader>
 						<DialogBody pb='8'>
+							<FileUploadRoot
+								maxFiles={1}
+								accept={['.txt']}
+								onFileAccept={(details) => {
+									handleAddAccountValueFromTxt(details)
+								}}
+							>
+								<FileUploadTrigger asChild>
+									<Button variant={'subtle'} size='sm'>
+										<HiUpload /> Upload file txt
+									</Button>
+								</FileUploadTrigger>
+							</FileUploadRoot>
+
 							<Textarea
-								placeholder='Enter accounts...'
+								placeholder='Enter accounts... (uid|password|2fa|cookie|token|proxy)'
 								mt='2'
 								rows={4}
 								value={accountValues}
-								onChange={(e) =>
+								onChange={(e) => {
 									setAccountValues(e.target.value)
-								}
+									setErrorAddMessage('')
+								}}
 							/>
 							{errorAddMessage && (
 								<Text color='red.500' mt={2} fontSize='sm'>
@@ -111,8 +224,12 @@ const Accounts = () => {
 								</Text>
 							)}
 							<Flex justify={'flex-end'}>
-								<Button onClick={handleAddAccountValue} mt={4}>
-									Add groups
+								<Button
+									onClick={handleAddAccountValue}
+									mt={4}
+									disabled={!accountValues}
+								>
+									Add accounts
 								</Button>
 							</Flex>
 						</DialogBody>
@@ -135,6 +252,7 @@ const Accounts = () => {
 								<Table.ColumnHeader>Cookie</Table.ColumnHeader>
 								<Table.ColumnHeader>Token</Table.ColumnHeader>
 								<Table.ColumnHeader>State</Table.ColumnHeader>
+								<Table.ColumnHeader>Proxy</Table.ColumnHeader>
 								<Table.ColumnHeader>LastRun</Table.ColumnHeader>
 								<Table.ColumnHeader>State</Table.ColumnHeader>
 							</Table.Row>
@@ -163,6 +281,9 @@ const Accounts = () => {
 											</Table.Cell>
 											<Table.Cell>
 												{item.state}
+											</Table.Cell>
+											<Table.Cell>
+												{item.proxy}
 											</Table.Cell>
 											<Table.Cell>
 												{item.last_run}

@@ -1,8 +1,12 @@
 import BoxLayout from '@/components/layout/BoxLayout'
 import { Button, Heading, HStack, Text } from '@chakra-ui/react'
 import { FaFacebook, FaTelegram } from 'react-icons/fa'
+import { Link } from 'react-router'
 
 const Help = () => {
+	const urlFacebook = import.meta.env.VITE_FACEBOOK_URL
+	const urlTelegram = import.meta.env.VITE_TELEGRAM_URL
+
 	return (
 		<BoxLayout>
 			<Heading as='h3' fontSize='2xl' fontWeight='bold' pb={7}>
@@ -14,12 +18,16 @@ const Help = () => {
 				shortly!
 			</Text>
 			<HStack>
-				<Button bg='#316FF6'>
-					<FaFacebook /> Facebook
-				</Button>
-				<Button bg='#229ED9'>
-					<FaTelegram /> Telegram
-				</Button>
+				<Link to={urlFacebook} target='_blank'>
+					<Button bg='#316FF6'>
+						<FaFacebook /> Facebook
+					</Button>
+				</Link>
+				<Link to={urlTelegram} target='_blank'>
+					<Button bg='#229ED9'>
+						<FaTelegram /> Telegram
+					</Button>
+				</Link>
 			</HStack>
 		</BoxLayout>
 	)

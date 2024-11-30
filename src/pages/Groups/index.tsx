@@ -60,6 +60,7 @@ const Groups = () => {
 	}, [currentPage])
 
 	const handleSearchClick = () => {
+		setCurrentPage(1)
 		fetchGroups(currentPage, q)
 	}
 
@@ -102,10 +103,22 @@ const Groups = () => {
 				<Heading as='h3' fontSize='2xl' fontWeight='bold' pb={7}>
 					Groups
 				</Heading>
-				<Flex alignItems={'center'} justify='space-between' pb={5}>
+				<Flex
+					alignItems={{
+						base: 'flex-start',
+						md: 'center',
+					}}
+					justify={{
+						base: 'center',
+						md: 'space-between',
+					}}
+					pb={5}
+					gap={2}
+					flexDirection={{ base: 'column', md: 'row' }}
+				>
 					<Flex alignItems={'center'} justify={'end'} gap={2}>
 						<Input
-							w={500}
+							w={400}
 							placeholder='Search...'
 							value={q}
 							onChange={(e) => setQ(e.target.value)}
@@ -146,6 +159,7 @@ const Groups = () => {
 									<Button
 										onClick={handleAddGroupValue}
 										mt={4}
+										disabled={!groupValues}
 									>
 										Add groups
 									</Button>
