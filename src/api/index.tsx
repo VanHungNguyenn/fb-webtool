@@ -10,7 +10,10 @@ import {
 	GetListAccountResponse,
 	GetListGroupsResponse,
 	GetListPostsResponse,
+	GetListUsersResponse,
 	LoginRequest,
+	PatchInfoUserRequest,
+	PatchInfoUserResponse,
 	RegisterRequest,
 } from './types'
 
@@ -64,6 +67,28 @@ export const postLogout = async (): Promise<AxiosResponse> => {
 // users
 export const getInfoUser = async (): Promise<GetInfoUserResponse> => {
 	const url = '/api/users/me'
+
+	const response = await axiosPrivate.get(url)
+
+	return response.data
+}
+
+export const patchInfoUser = async (
+	data: PatchInfoUserRequest
+): Promise<PatchInfoUserResponse> => {
+	const url = '/api/users/me'
+
+	const response = await axiosPrivate.patch(url, data)
+
+	return response.data
+}
+
+export const getListUsers = async (
+	q: string,
+	page: number = 1,
+	limit: number = 10
+): Promise<GetListUsersResponse> => {
+	const url = `/api/users?page=${page}&limit=${limit}&q=${q}`
 
 	const response = await axiosPrivate.get(url)
 

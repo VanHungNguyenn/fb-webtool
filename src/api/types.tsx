@@ -35,16 +35,23 @@ export interface LogoutResponse {
 }
 
 export interface UserSetting {
-	telegram: {
-		is_enabled: boolean
-		token: string
-		chat_id: string
-		thread_id: string
-	}
-	sheet: {
-		is_enabled: boolean
-		sheet_id: string
-	}
+	is_enabled_notification: boolean
+	is_enabled_keywords: boolean
+	keywords: string[] | null
+	telegram: TelegramSetting
+	sheet: SheetSetting
+}
+
+export interface TelegramSetting {
+	is_enabled: boolean
+	token: string | null
+	chat_id: string | null
+	thread_id: string | null
+}
+
+export interface SheetSetting {
+	is_enabled: boolean
+	sheet_id: string | null
 }
 
 export interface IUser {
@@ -62,9 +69,32 @@ export interface GetInfoUserResponse {
 	error?: string
 }
 
-export interface User {
+export interface PatchInfoUserRequest {
+	password?: string
+	is_active?: boolean
+	is_superuser?: boolean
+	is_verified?: boolean
+	setting: Partial<UserSetting>
+}
+
+export interface PatchInfoUserResponse {
+	success: boolean
+	data?: IUser
+}
+
+export interface UserData {
 	id: string
-	collection: string
+	email: string
+	is_active: boolean
+	is_superuser: boolean
+	is_verified: boolean
+	setting: UserSetting
+}
+
+export interface GetListUsersResponse {
+	success: boolean
+	total: number
+	data: UserData[]
 }
 
 export interface GroupData {
@@ -76,7 +106,10 @@ export interface GroupData {
 	name: string | null
 	privacy: string | null
 	last_run: string | null
-	users: User[]
+	users: {
+		id: string
+		collection: string
+	}[]
 }
 
 export interface GetListGroupsResponse {

@@ -1,20 +1,19 @@
-import { postLogin } from '@/api'
-import { LoginRequest } from '@/api/types'
-import { PayloadAction } from '@reduxjs/toolkit'
-import { AxiosError, AxiosResponse } from 'axios'
+import { getInfoUser } from '@/api'
+import { GetInfoUserResponse } from '@/api/types'
 import { call, put, takeLatest } from 'redux-saga/effects'
 import { authActions } from '../slices/authSlice'
 
-function* yieldLogin(action: PayloadAction<LoginRequest>) {
+function* yieldSetUser() {
 	try {
-		console.log(action.payload)
-		const response: AxiosResponse = yield call(postLogin, action.payload)
-		console.log(response)
+		const response: GetInfoUserResponse = yield call(getInfoUser)
+		if (response.data) {
+			yield put(authActions.setUserSuccess(response?.data))
+		}
 	} catch (err) {
-		yield put(authActions.actionLoginFailed(err as AxiosError))
+		yield put(authActions.setUserFailed())
 	}
 }
 
 export default function* authSaga() {
-	yield takeLatest(authActions.actionLogin.type, yieldLogin)
+	yield takeLatest(authActions.setUser.type, yieldSetUser)
 }

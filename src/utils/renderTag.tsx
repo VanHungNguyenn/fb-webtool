@@ -13,3 +13,19 @@ export const renderTag = (
 		</Tag>
 	)
 }
+
+export const renderTagBoolean = (
+	value: boolean,
+	labels?: { trueLabel: string; falseLabel: string }
+): JSX.Element => {
+	const colorPalette = value ? 'green' : 'red'
+	const text = value
+		? labels?.trueLabel || 'True'
+		: labels?.falseLabel || 'False'
+
+	return (
+		<Tag colorPalette={colorPalette} textTransform='capitalize'>
+			{text}
+		</Tag>
+	)
+}

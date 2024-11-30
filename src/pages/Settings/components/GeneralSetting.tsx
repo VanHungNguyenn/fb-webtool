@@ -1,12 +1,22 @@
+import { patchInfoUser } from '@/api'
+import { SheetSetting, TelegramSetting } from '@/api/types'
 import { Checkbox } from '@/components/ui/checkbox'
-import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
-import { Radio, RadioGroup } from '@/components/ui/radio'
 import {
 	RadioCardItem,
 	RadioCardLabel,
 	RadioCardRoot,
 } from '@/components/ui/radio-card'
 import { Switch } from '@/components/ui/switch'
+import useToast from '@/hooks/useToast'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import {
+	authActions,
+	selectIsEnabledKeywords,
+	selectIsEnabledNotification,
+	selectKeywords,
+	selectSheet,
+	selectTelegram,
+} from '@/store/slices/authSlice'
 import {
 	Button,
 	CheckboxGroup,
@@ -21,46 +31,95 @@ import {
 import { useState } from 'react'
 
 const items = [
-	{ value: 'all', title: 'All' },
 	{ value: 'keyword', title: 'By keywords' },
 	{ value: 'no', title: 'No' },
 ]
 
 const GeneralSetting = () => {
-	const [modeValue, setModeValue] = useState('one')
-	const [checked, setChecked] = useState(false)
-	const [notiValue, setNotiValue] = useState('all')
-	const [keywords, setKeywords] = useState('')
-	const [selectedServices, setSelectedServices] = useState<string[]>([])
+	const { showToast } = useToast()
+	const dispatch = useAppDispatch()
+
+	const isEnabledNotification = useAppSelector(selectIsEnabledNotification)
+	const isEnabledKeyWords = useAppSelector(selectIsEnabledKeywords)
+	const listKeyWords = useAppSelector(selectKeywords)
+	const telegramInfo = useAppSelector(selectTelegram)
+	const sheetInfo = useAppSelector(selectSheet)
+
+	const [notificationValue, setNotificationValue] = useState<boolean>(
+		isEnabledNotification || false
+	)
+	const [checked, setChecked] = useState(isEnabledKeyWords || false)
+	const [keyWords, setKeywords] = useState<string>(
+		listKeyWords?.join(', ') || ''
+	)
+	const [telegramSetting, setTelegramSetting] = useState<TelegramSetting>(
+		telegramInfo || {
+			is_enabled: false,
+			token: null,
+			chat_id: null,
+			thread_id: null,
+		}
+	)
+	const [sheetSetting, setSheetSetting] = useState<SheetSetting>(
+		sheetInfo || {
+			is_enabled: false,
+			sheet_id: null,
+		}
+	)
+
+	const handleTelegramChange = (
+		field: keyof TelegramSetting,
+		value: string | boolean
+	) => {
+		setTelegramSetting((prev) => ({ ...prev, [field]: value }))
+	}
+
+	const handleSheetChange = (value: string) => {
+		setSheetSetting((prev) => ({ ...prev, sheet_id: value }))
+	}
+
+	const handleSaveSettingChange = async () => {
+		const data = {
+			setting: {
+				is_enabled_notification: notificationValue,
+				is_enabled_keywords: checked,
+				keywords: keyWords.split(',').map((item) => item.trim()),
+				telegram: telegramSetting,
+				sheet: sheetSetting,
+			},
+		}
+
+		try {
+			const response = await patchInfoUser(data)
+
+			if (response.success) {
+				showToast({
+					description: 'Setting saved',
+					type: 'success',
+				})
+
+				dispatch(authActions.setUser())
+			} else {
+				showToast({
+					description: 'Failed to save setting',
+					type: 'error',
+				})
+			}
+		} catch (err) {
+			showToast({
+				description: 'Failed to save setting',
+				type: 'error',
+			})
+		}
+	}
 
 	return (
 		<Stack gap={3}>
-			<RadioGroup
-				colorPalette='colorPalette'
-				value={modeValue}
-				onValueChange={(e) => setModeValue(e.value)}
-			>
-				<Text fontWeight={600}>Mode:</Text>
-				<HStack gap='6'>
-					<Radio value='one'>One time</Radio>
-					<Radio value='repeat'>
-						<HStack>
-							Repeat after{' '}
-							<NumberInputRoot
-								defaultValue='10'
-								width='70px'
-								disabled={modeValue !== 'repeat'}
-							>
-								<NumberInputField />
-							</NumberInputRoot>
-							minutes
-						</HStack>
-					</Radio>
-				</HStack>
-			</RadioGroup>
 			<RadioCardRoot
-				value={notiValue}
-				onValueChange={(e) => setNotiValue(e.value)}
+				value={notificationValue === false ? 'no' : 'keyword'}
+				onValueChange={(e) => {
+					setNotificationValue(e.value === 'keyword')
+				}}
 				maxW={600}
 			>
 				<RadioCardLabel fontSize={'16px'} fontWeight={600}>
@@ -75,19 +134,22 @@ const GeneralSetting = () => {
 						/>
 					))}
 				</HStack>
-				{notiValue === 'keyword' && (
+				{notificationValue && (
 					<>
 						<Switch
 							checked={checked}
 							onCheckedChange={(e) => setChecked(e.checked)}
+							py={2}
 						>
-							Differentiate between uppercase and lowercase
-							letters.
+							<Text fontSize='md' fontWeight='normal'>
+								Differentiate between uppercase and lowercase
+								letters.
+							</Text>
 						</Switch>
 						<Textarea
 							placeholder='Keyword...'
 							rows={4}
-							value={keywords}
+							value={keyWords}
 							onChange={(e) => setKeywords(e.target.value)}
 						/>
 					</>
@@ -95,8 +157,20 @@ const GeneralSetting = () => {
 			</RadioCardRoot>
 			<Fieldset.Root pb={5}>
 				<CheckboxGroup
-					value={selectedServices}
-					onValueChange={(value) => setSelectedServices(value)}
+					value={[
+						telegramSetting.is_enabled ? 'telegram' : '',
+						sheetSetting.is_enabled ? 'google-sheet' : '',
+					]}
+					onValueChange={(values) => {
+						setTelegramSetting((prev) => ({
+							...prev,
+							is_enabled: values.includes('telegram'),
+						}))
+						setSheetSetting((prev) => ({
+							...prev,
+							is_enabled: values.includes('google-sheet'),
+						}))
+					}}
 					pb={3}
 				>
 					<Fieldset.Legend fontWeight={600} fontSize={16} pb={2}>
@@ -107,39 +181,70 @@ const GeneralSetting = () => {
 						<Checkbox value='google-sheet'>Google sheet</Checkbox>
 					</Fieldset.Content>
 				</CheckboxGroup>
-				{selectedServices.includes('telegram') && (
+				{telegramSetting.is_enabled && (
 					<Flex gap={3}>
 						<HStack maxW={400}>
 							<Text fontSize={'sm'} whiteSpace={'nowrap'}>
 								Bot token:
 							</Text>
-							<Input />
+							<Input
+								value={telegramSetting.token || ''}
+								onChange={(e) =>
+									handleTelegramChange(
+										'token',
+										e.target.value
+									)
+								}
+							/>
 						</HStack>
 						<HStack maxW={300}>
 							<Text fontSize={'sm'}>ChatID:</Text>
-							<Input />
+							<Input
+								value={telegramSetting.chat_id || ''}
+								onChange={(e) =>
+									handleTelegramChange(
+										'chat_id',
+										e.target.value
+									)
+								}
+							/>
 						</HStack>
 						<HStack maxW={300}>
 							<Text fontSize={'sm'}>ThreadID:</Text>
-							<Input />
+							<Input
+								value={telegramSetting.thread_id || ''}
+								onChange={(e) =>
+									handleTelegramChange(
+										'thread_id',
+										e.target.value
+									)
+								}
+							/>
 						</HStack>
 
-						<Button>Test</Button>
+						<Button>Check telegram</Button>
 					</Flex>
 				)}
-				{selectedServices.includes('google-sheet') && (
+				{sheetSetting.is_enabled && (
 					<Flex gap={3}>
 						<HStack>
 							<Text fontSize={'sm'} whiteSpace={'nowrap'}>
 								Sheet ID:
 							</Text>
-							<Input />
+							<Input
+								value={sheetSetting.sheet_id || ''}
+								onChange={(e) =>
+									handleSheetChange(e.target.value)
+								}
+							/>
 						</HStack>
-						<Button>Test</Button>
+						<Button disabled>Check GGsheet</Button>
 					</Flex>
 				)}
 			</Fieldset.Root>
-			<Button w={200}>Save</Button>
+			<Button w={200} onClick={handleSaveSettingChange}>
+				Save
+			</Button>
 		</Stack>
 	)
 }

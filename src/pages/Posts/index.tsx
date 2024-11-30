@@ -2,10 +2,15 @@ import { getListPosts } from '@/api'
 import { PostData } from '@/api/types'
 import PaginationCustom from '@/components/custom/PaginationCustom'
 import BoxLayout from '@/components/layout/BoxLayout'
-import { formatTimestamp } from '@/utils'
+import {
+	formatTimestamp,
+	transformToFacebookPostUrl,
+	truncateText,
+} from '@/utils'
 import {
 	Box,
 	Button,
+	Link as ChakraLink,
 	Flex,
 	Heading,
 	Input,
@@ -13,6 +18,8 @@ import {
 	Table,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router'
+
 const Posts = () => {
 	const [data, setData] = useState<PostData[]>([])
 	const [currentPage, setCurrentPage] = useState(1)
@@ -103,7 +110,23 @@ const Posts = () => {
 												{startIndex + index + 1}
 											</Table.Cell>
 											<Table.Cell>
-												{item.post_id}
+												<ChakraLink
+													asChild
+													outline={'none'}
+												>
+													<Link
+														to={transformToFacebookPostUrl(
+															item.post_id
+														)}
+														target='blank'
+													>
+														{truncateText(
+															transformToFacebookPostUrl(
+																item.post_id
+															)
+														)}
+													</Link>
+												</ChakraLink>
 											</Table.Cell>
 											<Table.Cell>
 												{item.from_user.name}
