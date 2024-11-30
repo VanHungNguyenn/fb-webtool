@@ -1,12 +1,12 @@
-import { Box } from '@chakra-ui/react'
+import { Box, BoxProps } from '@chakra-ui/react'
 
-interface BoxLayoutProps {
+interface BoxLayoutProps extends BoxProps {
 	children: React.ReactNode
 }
 
-const BoxLayout = ({ children }: BoxLayoutProps) => {
+const BoxLayout = ({ children, ...props }: BoxLayoutProps) => {
 	return (
-		<Box bg='bg' p={4} borderRadius={'xl'}>
+		<Box bg='bg' p={4} borderRadius='xl' {...props}>
 			{children}
 		</Box>
 	)

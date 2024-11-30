@@ -1,0 +1,3 @@
+user1|pass1|2fa1|cookie1|token1|proxy1
+user2|pass2|2fa2|cookie2|token2|proxy2
+user3|pass3|2fa3|cookie3|token3|proxy3

@@ -1,4 +1,5 @@
 import { Box, Stack } from '@chakra-ui/react'
+import { Link } from 'react-router-dom'
 import SidebarOptions from './components/SidebarOptions'
 
 interface SidebarProps {
@@ -24,14 +25,16 @@ const Sidebar = ({ isShowSidebar }: SidebarProps) => {
 			}}
 		>
 			<Stack>
-				<Box
-					display='flex'
-					alignItems='center'
-					justifyContent='center'
-					py={10}
-				>
-					<img src='/logo.svg' alt='avatar' width='80%' />
-				</Box>
+				<Link to='/'>
+					<Box
+						display='flex'
+						alignItems='center'
+						justifyContent='center'
+						py={10}
+					>
+						<img src='/logo.svg' alt='avatar' width='80%' />
+					</Box>
+				</Link>
 				<SidebarOptions />
 			</Stack>
 		</Box>

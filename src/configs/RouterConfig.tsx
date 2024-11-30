@@ -3,6 +3,7 @@ import ForgotPassword from '@/pages/ForgotPassword'
 import Page404 from '@/pages/Page404'
 import SignIn from '@/pages/SignIn'
 import SignUp from '@/pages/SignUp'
+import AdminRoute from '@/routes/AdminRoute'
 import PrivateRoute from '@/routes/PrivateRoute'
 import PublicRoute from '@/routes/PublicRoute'
 import { createBrowserRouter } from 'react-router-dom'
@@ -18,7 +19,11 @@ export const router = createBrowserRouter([
 		),
 		children: navigationConfig.map((navItem: NavTreeItem) => ({
 			path: navItem.path,
-			element: navItem.element,
+			element: navItem.isAdmin ? (
+				<AdminRoute>{navItem.element}</AdminRoute>
+			) : (
+				navItem.element
+			),
 			index: navItem.key === 'home',
 		})),
 	},

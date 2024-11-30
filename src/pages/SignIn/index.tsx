@@ -35,8 +35,6 @@ const SignIn = () => {
 
 	const onSubmit = handleSubmit(async (data) => {
 		try {
-			dispatch(authActions.setIsLoading(true))
-
 			const response = await postLogin({
 				username: data.email,
 				password: data.password,

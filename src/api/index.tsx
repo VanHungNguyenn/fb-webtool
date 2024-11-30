@@ -1,8 +1,15 @@
 import axios, { AxiosResponse } from 'axios'
 import { axiosPrivate, axiosPublic } from './axiosClient'
 import {
+	CreateListAccountsRequest,
+	CreateListAccountsResponse,
+	CreateListGroupsRequest,
+	CreateListGroupsResponse,
 	ForgotPasswordResponse,
 	GetInfoUserResponse,
+	GetListAccountResponse,
+	GetListGroupsResponse,
+	GetListPostsResponse,
 	LoginRequest,
 	RegisterRequest,
 } from './types'
@@ -57,6 +64,66 @@ export const postLogout = async (): Promise<AxiosResponse> => {
 // users
 export const getInfoUser = async (): Promise<GetInfoUserResponse> => {
 	const url = '/api/users/me'
+
+	const response = await axiosPrivate.get(url)
+
+	return response.data
+}
+
+// groups
+export const getListGroups = async (
+	q: string,
+	page: number = 1,
+	limit: number = 10
+): Promise<GetListGroupsResponse> => {
+	const url = `/api/groups/?page=${page}&limit=${limit}&q=${q}`
+
+	const response = await axiosPrivate.get(url)
+
+	return response.data
+}
+
+export const createListGroups = async (
+	data: CreateListGroupsRequest
+): Promise<CreateListGroupsResponse> => {
+	const url = '/api/groups/bulk'
+
+	const response = await axiosPrivate.post(url, data)
+
+	return response.data
+}
+
+// accounts
+export const getListAccounts = async (
+	q: string,
+	page: number = 1,
+	limit: number = 10
+): Promise<GetListAccountResponse> => {
+	const url = `/api/accounts/?page=${page}&limit=${limit}&q=${q}`
+
+	const response = await axiosPrivate.get(url)
+
+	return response.data
+}
+
+export const createListAccounts = async (
+	data: CreateListAccountsRequest
+): Promise<CreateListAccountsResponse> => {
+	const url = '/api/accounts/bulk'
+
+	const response = await axiosPrivate.post(url, data)
+
+	return response.data
+}
+
+// posts
+export const getListPosts = async (
+	q: string,
+	page: number = 1,
+	limit: number = 10,
+	group_id: string
+): Promise<GetListPostsResponse> => {
+	const url = `/api/posts/?page=${page}&limit=${limit}&q=${q}&group_id=${group_id}`
 
 	const response = await axiosPrivate.get(url)
 

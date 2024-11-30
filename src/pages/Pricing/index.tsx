@@ -23,11 +23,18 @@ const Pricing = () => {
 				</Text>
 			</VStack>
 
-			<Flex alignItems={'center'} justify={'center'} gap={4} pb={10}>
+			<Flex
+				alignItems={'center'}
+				justify={'center'}
+				gap={6}
+				pb={10}
+				flexWrap={'wrap'}
+			>
 				{Array.from({ length: 3 }).map((_, index) => (
 					<Box
 						key={index}
-						w={400}
+						maxW={400}
+						minW={300}
 						borderRadius='xl'
 						overflow='hidden'
 						boxShadow='0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04)'
