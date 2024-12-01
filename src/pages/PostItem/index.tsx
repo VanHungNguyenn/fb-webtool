@@ -42,12 +42,7 @@ const PostItem = () => {
 		)
 	}
 
-	// Nếu không lấy được thông tin nhóm
-	if (!groupName) {
-		return <div>Group not found</div>
-	}
-
-	return <PostPage groupId={params.id} groupName={groupName} />
+	return <PostPage groupId={params.id} groupName={groupName || ''} />
 }
 
 export default PostItem
