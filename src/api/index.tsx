@@ -7,6 +7,7 @@ import {
 	CreateListGroupsResponse,
 	DefaultResponse,
 	ForgotPasswordResponse,
+	GetGroupInfo,
 	GetInfoUserResponse,
 	GetListAccountResponse,
 	GetListGroupsResponse,
@@ -105,6 +106,14 @@ export const getCheckTelegram = async (): Promise<DefaultResponse> => {
 }
 
 // groups
+export const getGroupInfo = async (id: string): Promise<GetGroupInfo> => {
+	const url = `/api/groups/${id}`
+
+	const response = await axiosPrivate.get(url)
+
+	return response.data
+}
+
 export const getListGroups = async (
 	q: string,
 	page: number = 1,

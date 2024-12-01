@@ -118,6 +118,12 @@ export interface GroupData {
 	}[]
 }
 
+export interface GetGroupInfo {
+	success: boolean
+	data: GroupData
+	error?: string
+}
+
 export interface GetListGroupsResponse {
 	success: boolean
 	data: GroupData[]

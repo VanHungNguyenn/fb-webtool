@@ -24,10 +24,12 @@ import {
 import {
 	Box,
 	Button,
+	Link as ChakraLink,
 	Flex,
 	Heading,
 	HStack,
 	Input,
+	Spinner,
 	Stack,
 	Table,
 	Text,
@@ -44,7 +46,7 @@ const Groups = () => {
 	const [currentPage, setCurrentPage] = useState(1)
 	const [totalItems, setTotalItems] = useState(0)
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
-	const [isLoading, setIsLoading] = useState(false) // Trạng thái loading
+	const [isLoading, setIsLoading] = useState(false)
 	const [q, setQ] = useState('')
 	const [groupValues, setGroupValues] = useState('')
 	const [errorAddMessage, setErrorAddMessage] = useState('')
@@ -160,7 +162,7 @@ const Groups = () => {
 					gap={2}
 					flexDirection={{ base: 'column', md: 'row' }}
 				>
-					<Flex alignItems={'center'} justify={'end'} gap={2}>
+					<Flex alignItems={'center'} gap={2}>
 						<Input
 							w={400}
 							placeholder='Search...'
@@ -218,8 +220,9 @@ const Groups = () => {
 							size='sm'
 							showColumnBorder
 							variant='outline'
+							interactive
 						>
-							<Table.Header background='#b1c5fa'>
+							<Table.Header bg='blue.300'>
 								<Table.Row>
 									<Table.ColumnHeader>#</Table.ColumnHeader>
 									<Table.ColumnHeader>
@@ -237,17 +240,28 @@ const Groups = () => {
 									<Table.ColumnHeader>
 										LastRun
 									</Table.ColumnHeader>
-									<Table.ColumnHeader>
-										Status
-									</Table.ColumnHeader>
+
 									<Table.ColumnHeader>
 										Action
 									</Table.ColumnHeader>
 								</Table.Row>
 							</Table.Header>
 							<Table.Body>
-								{!isLoading &&
-									data?.map((item, index) => {
+								{!isLoading && data.length === 0 && (
+									<Table.Row>
+										<Table.Cell colSpan={6} h={100}>
+											<Text
+												textAlign='center'
+												color='gray.500'
+												fontSize='lg'
+											>
+												No data found
+											</Text>
+										</Table.Cell>
+									</Table.Row>
+								)}
+								{!isLoading ? (
+									data.map((item, index) => {
 										return (
 											<Table.Row key={index}>
 												<Table.Cell>
@@ -255,7 +269,14 @@ const Groups = () => {
 												</Table.Cell>
 
 												<Table.Cell>
-													{item.group_id}
+													<ChakraLink
+														asChild
+														outline={'none'}
+													>
+														<Link to={item.url}>
+															{item.group_id}
+														</Link>
+													</ChakraLink>
 												</Table.Cell>
 												<Table.Cell>
 													{item.name}
@@ -273,7 +294,7 @@ const Groups = () => {
 														item.last_run
 													)}
 												</Table.Cell>
-												<Table.Cell></Table.Cell>
+
 												<Table.Cell>
 													<HStack>
 														<Tooltip
@@ -283,7 +304,7 @@ const Groups = () => {
 															closeDelay={100}
 														>
 															<Link
-																to={`/groups/${item.id}`}
+																to={`/posts/${item.id}`}
 															>
 																<Button
 																	size='sm'
@@ -306,7 +327,7 @@ const Groups = () => {
 																variant={
 																	'outline'
 																}
-																color='red.500'
+																color='red.400'
 																onClick={() => {
 																	setDeleteItemId(
 																		item.id
@@ -323,17 +344,32 @@ const Groups = () => {
 												</Table.Cell>
 											</Table.Row>
 										)
-									})}
+									})
+								) : (
+									<Table.Row>
+										<Table.Cell colSpan={6} h={100}>
+											<Text
+												textAlign='center'
+												color='gray.500'
+												fontSize='lg'
+											>
+												<Spinner />
+											</Text>
+										</Table.Cell>
+									</Table.Row>
+								)}
 							</Table.Body>
 						</Table.Root>
 					</Box>
-					<PaginationCustom
-						totalItems={totalItems}
-						pageSize={pageSize}
-						currentPage={currentPage}
-						onPageChange={(page) => setCurrentPage(page)}
-						setPageSize={setPageSize}
-					/>
+					{data.length > 0 && (
+						<PaginationCustom
+							totalItems={totalItems}
+							pageSize={pageSize}
+							currentPage={currentPage}
+							onPageChange={(page) => setCurrentPage(page)}
+							setPageSize={setPageSize}
+						/>
+					)}
 				</Stack>
 			</BoxLayout>
 			<DialogRoot
@@ -345,7 +381,12 @@ const Groups = () => {
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>
-							Are you want to delete this item?
+							Are you sure you want to delete group "
+							{
+								data.find((item) => item.id === deleteItemId)
+									?.name
+							}
+							"?
 						</DialogTitle>
 					</DialogHeader>
 					<DialogBody>

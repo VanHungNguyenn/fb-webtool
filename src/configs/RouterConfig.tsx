@@ -1,6 +1,7 @@
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import ForgotPassword from '@/pages/ForgotPassword'
 import Page404 from '@/pages/Page404'
+import PostItem from '@/pages/PostItem'
 import SignIn from '@/pages/SignIn'
 import SignUp from '@/pages/SignUp'
 import AdminRoute from '@/routes/AdminRoute'
@@ -17,15 +18,21 @@ export const router = createBrowserRouter([
 				<DashboardLayout />
 			</PrivateRoute>
 		),
-		children: navigationConfig.map((navItem: NavTreeItem) => ({
-			path: navItem.path,
-			element: navItem.isAdmin ? (
-				<AdminRoute>{navItem.element}</AdminRoute>
-			) : (
-				navItem.element
-			),
-			index: navItem.key === 'home',
-		})),
+		children: [
+			...navigationConfig.map((navItem: NavTreeItem) => ({
+				path: navItem.path,
+				element: navItem.isAdmin ? (
+					<AdminRoute>{navItem.element}</AdminRoute>
+				) : (
+					navItem.element
+				),
+				index: navItem.key === 'home',
+			})),
+			{
+				path: '/posts/:id',
+				element: <PostItem />,
+			},
+		],
 	},
 	{
 		path: '/sign-in',

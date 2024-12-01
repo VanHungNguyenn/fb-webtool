@@ -242,7 +242,7 @@ const Accounts = () => {
 			<Stack>
 				<Box overflowX='auto' p={1}>
 					<Table.Root size='sm' showColumnBorder variant='outline'>
-						<Table.Header background='#b1c5fa'>
+						<Table.Header background='blue.300'>
 							<Table.Row>
 								<Table.ColumnHeader>#</Table.ColumnHeader>
 								<Table.ColumnHeader>UID</Table.ColumnHeader>
