@@ -121,9 +121,8 @@ const Posts = () => {
 														target='blank'
 													>
 														{truncateText(
-															transformToFacebookPostUrl(
-																item.post_id
-															)
+															item.post_id,
+															20
 														)}
 													</Link>
 												</ChakraLink>

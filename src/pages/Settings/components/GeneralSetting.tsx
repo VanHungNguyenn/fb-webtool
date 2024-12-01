@@ -1,11 +1,7 @@
-import { patchInfoUser } from '@/api'
+import { getCheckTelegram, patchInfoUser } from '@/api'
 import { SheetSetting, TelegramSetting } from '@/api/types'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-	RadioCardItem,
-	RadioCardLabel,
-	RadioCardRoot,
-} from '@/components/ui/radio-card'
+import { RadioCardLabel, RadioCardRoot } from '@/components/ui/radio-card'
 import { Switch } from '@/components/ui/switch'
 import useToast from '@/hooks/useToast'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
@@ -30,11 +26,6 @@ import {
 } from '@chakra-ui/react'
 import { useState } from 'react'
 
-const items = [
-	{ value: 'keyword', title: 'By keywords' },
-	{ value: 'no', title: 'No' },
-]
-
 const GeneralSetting = () => {
 	const { showToast } = useToast()
 	const dispatch = useAppDispatch()
@@ -48,7 +39,9 @@ const GeneralSetting = () => {
 	const [notificationValue, setNotificationValue] = useState<boolean>(
 		isEnabledNotification || false
 	)
-	const [checked, setChecked] = useState(isEnabledKeyWords || false)
+	const [checkedKeyWords, setCheckedKeywords] = useState(
+		isEnabledKeyWords || false
+	)
 	const [keyWords, setKeywords] = useState<string>(
 		listKeyWords?.join(', ') || ''
 	)
@@ -78,11 +71,34 @@ const GeneralSetting = () => {
 		setSheetSetting((prev) => ({ ...prev, sheet_id: value }))
 	}
 
+	const handleCheckTelegram = async () => {
+		try {
+			const response = await getCheckTelegram()
+
+			if (response.success) {
+				showToast({
+					description: 'Telegram connected',
+					type: 'success',
+				})
+			} else {
+				showToast({
+					description: response.error || 'Failed to check telegram',
+					type: 'error',
+				})
+			}
+		} catch (err: unknown) {
+			showToast({
+				description: 'Failed to check telegram',
+				type: 'error',
+			})
+		}
+	}
+
 	const handleSaveSettingChange = async () => {
 		const data = {
 			setting: {
 				is_enabled_notification: notificationValue,
-				is_enabled_keywords: checked,
+				is_enabled_keywords: checkedKeyWords,
 				keywords: keyWords.split(',').map((item) => item.trim()),
 				telegram: telegramSetting,
 				sheet: sheetSetting,
@@ -122,30 +138,31 @@ const GeneralSetting = () => {
 				}}
 				maxW={600}
 			>
-				<RadioCardLabel fontSize={'16px'} fontWeight={600}>
-					Notification:
-				</RadioCardLabel>
-				<HStack align='stretch' pb={2}>
-					{items.map((item) => (
-						<RadioCardItem
-							label={item.title}
-							key={item.value}
-							value={item.value}
-						/>
-					))}
+				<HStack py={5}>
+					<RadioCardLabel fontSize={'16px'} fontWeight={600}>
+						Notification:
+					</RadioCardLabel>
+					<Switch
+						size='lg'
+						checked={notificationValue}
+						onCheckedChange={(e) => setNotificationValue(e.checked)}
+					></Switch>
 				</HStack>
 				{notificationValue && (
 					<>
-						<Switch
-							checked={checked}
-							onCheckedChange={(e) => setChecked(e.checked)}
-							py={2}
-						>
-							<Text fontSize='md' fontWeight='normal'>
-								Differentiate between uppercase and lowercase
-								letters.
-							</Text>
-						</Switch>
+						<Fieldset.Root pb={0}>
+							<CheckboxGroup
+								value={[checkedKeyWords ? 'by' : '']}
+								onValueChange={(values) => {
+									setCheckedKeywords(values.includes('by'))
+								}}
+								pb={3}
+							>
+								<Fieldset.Content flexDirection={'row'}>
+									<Checkbox value='by'>Keywords</Checkbox>
+								</Fieldset.Content>
+							</CheckboxGroup>
+						</Fieldset.Root>
 						<Textarea
 							placeholder='Keyword...'
 							rows={4}
@@ -222,7 +239,9 @@ const GeneralSetting = () => {
 							/>
 						</HStack>
 
-						<Button>Check telegram</Button>
+						<Button onClick={handleCheckTelegram}>
+							Check telegram
+						</Button>
 					</Flex>
 				)}
 				{sheetSetting.is_enabled && (

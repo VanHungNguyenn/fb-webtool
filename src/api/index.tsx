@@ -5,6 +5,7 @@ import {
 	CreateListAccountsResponse,
 	CreateListGroupsRequest,
 	CreateListGroupsResponse,
+	DefaultResponse,
 	ForgotPasswordResponse,
 	GetInfoUserResponse,
 	GetListAccountResponse,
@@ -95,6 +96,14 @@ export const getListUsers = async (
 	return response.data
 }
 
+export const getCheckTelegram = async (): Promise<DefaultResponse> => {
+	const url = '/api/users/me/telegram'
+
+	const response = await axiosPrivate.get(url)
+
+	return response.data
+}
+
 // groups
 export const getListGroups = async (
 	q: string,
@@ -114,6 +123,14 @@ export const createListGroups = async (
 	const url = '/api/groups/bulk'
 
 	const response = await axiosPrivate.post(url, data)
+
+	return response.data
+}
+
+export const deleteGroup = async (id: string): Promise<DefaultResponse> => {
+	const url = `/api/groups/${id}`
+
+	const response = await axiosPrivate.delete(url)
 
 	return response.data
 }

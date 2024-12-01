@@ -1,3 +1,9 @@
+export interface DefaultResponse {
+	success: boolean
+	error?: string
+	data?: unknown
+}
+
 export interface RegisterRequest {
 	email: string
 	password: string
@@ -100,7 +106,7 @@ export interface GetListUsersResponse {
 export interface GroupData {
 	created_at: string
 	updated_at: string | null
-	_id: string
+	id: string
 	url: string
 	group_id: string | null
 	name: string | null

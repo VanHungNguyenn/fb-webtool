@@ -185,7 +185,6 @@ const Accounts = () => {
 				<DialogRoot
 					open={isDialogOpen}
 					onOpenChange={(details) => setIsDialogOpen(details.open)}
-					placement='center'
 					motionPreset='slide-in-bottom'
 					size='xl'
 				>

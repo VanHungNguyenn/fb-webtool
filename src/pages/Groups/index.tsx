@@ -1,30 +1,42 @@
-import { createListGroups, getListGroups } from '@/api'
+import { createListGroups, deleteGroup, getListGroups } from '@/api'
 import { GroupData } from '@/api/types'
 import PaginationCustom from '@/components/custom/PaginationCustom'
 import BoxLayout from '@/components/layout/BoxLayout'
 import {
+	DialogActionTrigger,
 	DialogBody,
 	DialogCloseTrigger,
 	DialogContent,
+	DialogFooter,
 	DialogHeader,
 	DialogRoot,
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
+import { Tooltip } from '@/components/ui/tooltip'
 import useToast from '@/hooks/useToast'
-import { isValidUrl, renderTag, truncateText } from '@/utils'
+import {
+	getPageSizeDefault,
+	isValidUrl,
+	renderTag,
+	truncateText,
+} from '@/utils'
 import {
 	Box,
 	Button,
 	Flex,
 	Heading,
+	HStack,
 	Input,
 	Stack,
 	Table,
 	Text,
 	Textarea,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { FaList } from 'react-icons/fa6'
+import { MdDelete } from 'react-icons/md'
+import { Link } from 'react-router-dom'
 import { formatTimestamp } from '../../utils/formatTimestamp'
 
 const Groups = () => {
@@ -36,28 +48,32 @@ const Groups = () => {
 	const [q, setQ] = useState('')
 	const [groupValues, setGroupValues] = useState('')
 	const [errorAddMessage, setErrorAddMessage] = useState('')
-	const pageSize = 10
+	const [pageSize, setPageSize] = useState(getPageSizeDefault())
+	const [isShowDeleteDialog, setIsShowDeleteDialog] = useState(false)
+	const [deleteItemId, setDeleteItemId] = useState<string | null>(null)
 
 	const { showToast } = useToast()
 
 	const startIndex = (currentPage - 1) * pageSize
 
-	const fetchGroups = async (page: number, q: string) => {
-		try {
-			setIsLoading(true)
-			const res = await getListGroups(q, page, pageSize)
-			setData(res.data)
-			setTotalItems(res.total)
-		} catch (error) {
-			console.error(error)
-		} finally {
-			setIsLoading(false)
-		}
-	}
-
+	const fetchGroups = useCallback(
+		async (page: number, q: string) => {
+			try {
+				setIsLoading(true)
+				const res = await getListGroups(q, page, pageSize)
+				setData(res.data)
+				setTotalItems(res.total)
+			} catch (error) {
+				console.error(error)
+			} finally {
+				setIsLoading(false)
+			}
+		},
+		[pageSize]
+	)
 	useEffect(() => {
 		fetchGroups(currentPage, '')
-	}, [currentPage])
+	}, [currentPage, fetchGroups])
 
 	const handleSearchClick = () => {
 		setCurrentPage(1)
@@ -97,6 +113,34 @@ const Groups = () => {
 		}
 	}
 
+	const handleDeleteItem = async () => {
+		if (!deleteItemId) return
+
+		try {
+			// Gửi yêu cầu xóa
+			const response = await deleteGroup(deleteItemId)
+
+			if (response.success) {
+				showToast({
+					description: 'Item deleted successfully.',
+					type: 'success',
+				})
+				fetchGroups(currentPage, q)
+			} else {
+				showToast({
+					description: 'Failed to delete item. Please try again.',
+					type: 'error',
+				})
+			}
+			setIsShowDeleteDialog(false)
+		} catch (error) {
+			showToast({
+				description: 'Failed to delete item. Please try again.',
+				type: 'error',
+			})
+		}
+	}
+
 	return (
 		<>
 			<BoxLayout>
@@ -130,7 +174,6 @@ const Groups = () => {
 						onOpenChange={(details) =>
 							setIsDialogOpen(details.open)
 						}
-						placement='center'
 						motionPreset='slide-in-bottom'
 					>
 						<DialogTrigger asChild>
@@ -169,7 +212,7 @@ const Groups = () => {
 						</DialogContent>
 					</DialogRoot>
 				</Flex>
-				<Stack>
+				<Stack flex={1}>
 					<Box overflowX='auto' p={1}>
 						<Table.Root
 							size='sm'
@@ -197,6 +240,9 @@ const Groups = () => {
 									<Table.ColumnHeader>
 										Status
 									</Table.ColumnHeader>
+									<Table.ColumnHeader>
+										Action
+									</Table.ColumnHeader>
 								</Table.Row>
 							</Table.Header>
 							<Table.Body>
@@ -207,6 +253,7 @@ const Groups = () => {
 												<Table.Cell>
 													{startIndex + index + 1}
 												</Table.Cell>
+
 												<Table.Cell>
 													{item.group_id}
 												</Table.Cell>
@@ -227,6 +274,53 @@ const Groups = () => {
 													)}
 												</Table.Cell>
 												<Table.Cell></Table.Cell>
+												<Table.Cell>
+													<HStack>
+														<Tooltip
+															content='View detail'
+															showArrow
+															openDelay={100}
+															closeDelay={100}
+														>
+															<Link
+																to={`/groups/${item.id}`}
+															>
+																<Button
+																	size='sm'
+																	variant={
+																		'outline'
+																	}
+																>
+																	<FaList />
+																</Button>
+															</Link>
+														</Tooltip>
+														<Tooltip
+															content='Delete'
+															showArrow
+															openDelay={100}
+															closeDelay={100}
+														>
+															<Button
+																size='sm'
+																variant={
+																	'outline'
+																}
+																color='red.500'
+																onClick={() => {
+																	setDeleteItemId(
+																		item.id
+																	)
+																	setIsShowDeleteDialog(
+																		true
+																	)
+																}}
+															>
+																<MdDelete />
+															</Button>
+														</Tooltip>
+													</HStack>
+												</Table.Cell>
 											</Table.Row>
 										)
 									})}
@@ -238,9 +332,46 @@ const Groups = () => {
 						pageSize={pageSize}
 						currentPage={currentPage}
 						onPageChange={(page) => setCurrentPage(page)}
+						setPageSize={setPageSize}
 					/>
 				</Stack>
 			</BoxLayout>
+			<DialogRoot
+				role='alertdialog'
+				open={isShowDeleteDialog}
+				onOpenChange={(details) => setIsShowDeleteDialog(details.open)}
+				motionPreset='slide-in-bottom'
+			>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>
+							Are you want to delete this item?
+						</DialogTitle>
+					</DialogHeader>
+					<DialogBody>
+						<p>
+							This action cannot be undone. The item will be
+							permanently deleted from your system.
+						</p>
+					</DialogBody>
+					<DialogFooter>
+						<DialogActionTrigger asChild>
+							<Button
+								variant='outline'
+								onClick={() => {
+									setDeleteItemId(null)
+								}}
+							>
+								Cancel
+							</Button>
+						</DialogActionTrigger>
+						<Button colorPalette='red' onClick={handleDeleteItem}>
+							Delete
+						</Button>
+					</DialogFooter>
+					<DialogCloseTrigger />
+				</DialogContent>
+			</DialogRoot>
 		</>
 	)
 }

@@ -6,7 +6,14 @@ interface BoxLayoutProps extends StackProps {
 
 const BoxLayout = ({ children, ...props }: BoxLayoutProps) => {
 	return (
-		<Stack flex={1} bg='bg' p={4} borderRadius='xl' {...props}>
+		<Stack
+			flex={1}
+			bg='bg'
+			p={4}
+			borderRadius='xl'
+			overflowX='auto'
+			{...props}
+		>
 			{children}
 		</Stack>
 	)
